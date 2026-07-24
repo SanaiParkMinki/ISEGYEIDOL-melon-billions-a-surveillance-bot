@@ -242,7 +242,15 @@ async function boot(){
 function render(){
   const h=DATA.history;
   if(!h||h.length===0){
-    document.getElementById('total').textContent='기록 없음';
+    document.getElementById('total').innerHTML='<span style="font-size:.44em;color:var(--muted);font-family:Pretendard,sans-serif;font-weight:400">첫 숫자를 기다리는 중</span>';
+    document.getElementById('d1').textContent='—';
+    document.getElementById('d7').textContent='—';
+    document.getElementById('eyebrow').textContent='아직 기록이 없습니다';
+    document.getElementById('notice').hidden=false;
+    document.getElementById('notice').innerHTML='<b>공책이 비어 있습니다.</b> 저장소 Actions 탭 → 스냅샷 수집 → Run workflow 에서 멜론 누적 스트리밍 수를 넣으면 여기가 채워집니다.';
+    document.getElementById('rail').innerHTML='';
+    document.getElementById('railFoot').innerHTML='<span>기록이 2개 이상 쌓이면 도달 예상일이 계산됩니다.</span>';
+    drawSongs();
     return;
   }
   const last=h[h.length-1], total=last.total_streams;
