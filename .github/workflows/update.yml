@@ -34,21 +34,29 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: 파일 확인
+        run: |
+          missing=0
+          for f in scripts/collect.py data/history.json; do
+            if [ ! -f "$f" ]; then echo "::error::$f 가 저장소에 없습니다. 업로드가 빠졌는지 확인하세요."; missing=1; fi
+          done
+          [ "$missing" = "0" ]
+
       - name: 숫자 기록
         env:
           IN_VALUE: ${{ inputs.value }}
           IN_DATE: ${{ inputs.date }}
         run: |
-          ARGS=""
-          [ -n "$IN_VALUE" ] && ARGS="--value $IN_VALUE"
-          [ -n "$IN_DATE" ]  && ARGS="$ARGS --date $IN_DATE"
-
-          if [ -n "$ARGS" ]; then
-            # 손으로 넣은 값 — 실패하면 진짜 실패로 표시
-            python3 scripts/collect.py $ARGS
+          if [ -n "$IN_VALUE" ]; then
+            # 손으로 넣은 값. 쉼표나 '회'가 붙어 있어도 스크립트가 알아서 걸러냅니다.
+            if [ -n "$IN_DATE" ]; then
+              python3 scripts/collect.py --value "$IN_VALUE" --date "$IN_DATE"
+            else
+              python3 scripts/collect.py --value "$IN_VALUE"
+            fi
           else
-            # 자동 시도 — 막히면 조용히 넘어감
-            python3 scripts/collect.py || echo "자동 수집 실패(멜론 차단으로 보임). 수동 입력을 쓰세요."
+            # 자동 시도. 멜론에 막히면 조용히 넘어갑니다.
+            python3 scripts/collect.py || echo "::notice::자동 수집 실패(멜론 차단으로 보임). Run workflow 로 숫자를 직접 넣으세요."
           fi
 
       - name: 변경분 커밋
