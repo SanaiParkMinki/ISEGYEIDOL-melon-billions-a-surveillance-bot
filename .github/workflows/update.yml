@@ -1,9 +1,21 @@
 name: 스냅샷 수집
 
 on:
+  # 손으로 숫자 넣기 — 이게 기본 방식입니다.
+  workflow_dispatch:
+    inputs:
+      value:
+        description: "멜론에서 본 누적 스트리밍 수 (쉼표 빼고 숫자만)"
+        required: false
+        type: string
+      date:
+        description: "날짜 (비워두면 오늘). 예: 2026-07-20"
+        required: false
+        type: string
+
+  # 자동 수집은 되면 좋고 안 되면 마는 보너스입니다. 막혀도 빨간 X를 띄우지 않습니다.
   schedule:
-    - cron: "0 19 * * *"   # 매일 04:00 KST (19:00 UTC 전날)
-  workflow_dispatch:        # 저장소 Actions 탭에서 수동 실행
+    - cron: "0 19 * * *"   # 매일 04:00 KST
 
 permissions:
   contents: write
@@ -22,17 +34,31 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: 스냅샷 수집
-        run: python3 scripts/collect.py
+      - name: 숫자 기록
+        env:
+          IN_VALUE: ${{ inputs.value }}
+          IN_DATE: ${{ inputs.date }}
+        run: |
+          ARGS=""
+          [ -n "$IN_VALUE" ] && ARGS="--value $IN_VALUE"
+          [ -n "$IN_DATE" ]  && ARGS="$ARGS --date $IN_DATE"
+
+          if [ -n "$ARGS" ]; then
+            # 손으로 넣은 값 — 실패하면 진짜 실패로 표시
+            python3 scripts/collect.py $ARGS
+          else
+            # 자동 시도 — 막히면 조용히 넘어감
+            python3 scripts/collect.py || echo "자동 수집 실패(멜론 차단으로 보임). 수동 입력을 쓰세요."
+          fi
 
       - name: 변경분 커밋
         run: |
           if git diff --quiet -- data/history.json; then
-            echo "변경 없음 — 커밋 생략"
+            echo "새로 적을 게 없어 건너뜁니다."
             exit 0
           fi
           git config user.name  "billions-bot"
           git config user.email "billions-bot@users.noreply.github.com"
           git add data/history.json
-          git commit -m "스냅샷 $(date -u -d '+9 hours' +%Y-%m-%d)"
+          git commit -m "스냅샷 $(TZ=Asia/Seoul date +%Y-%m-%d)"
           git push
