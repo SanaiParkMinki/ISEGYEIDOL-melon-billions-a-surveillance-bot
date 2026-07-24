@@ -1,0 +1,13 @@
+{
+ "artist": {"name": "이세계아이돌", "melon_artist_id": "3059851", "debut": "2021-12-17"},
+ "updated_at": null,
+ "source": null,
+ "tiers": [
+  {"name": "브론즈", "threshold": 1000000000},
+  {"name": "실버", "threshold": 2000000000},
+  {"name": "골드", "threshold": 5000000000},
+  {"name": "다이아", "threshold": 10000000000}
+ ],
+ "history": [],
+ "songs": []
+}
