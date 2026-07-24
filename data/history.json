@@ -1,13 +1,34 @@
 {
- "artist": {"name": "이세계아이돌", "melon_artist_id": "3059851", "debut": "2021-12-17"},
- "updated_at": null,
- "source": null,
+ "artist": {
+  "name": "이세계아이돌",
+  "melon_artist_id": "3059851",
+  "debut": "2021-12-17"
+ },
+ "updated_at": "2026-07-24T12:28:03+09:00",
+ "source": "manual",
  "tiers": [
-  {"name": "브론즈", "threshold": 1000000000},
-  {"name": "실버", "threshold": 2000000000},
-  {"name": "골드", "threshold": 5000000000},
-  {"name": "다이아", "threshold": 10000000000}
+  {
+   "name": "브론즈",
+   "threshold": 1000000000
+  },
+  {
+   "name": "실버",
+   "threshold": 2000000000
+  },
+  {
+   "name": "골드",
+   "threshold": 5000000000
+  },
+  {
+   "name": "다이아",
+   "threshold": 10000000000
+  }
  ],
- "history": [],
+ "history": [
+  {
+   "date": "2026-07-24",
+   "total_streams": 573243163
+  }
+ ],
  "songs": []
 }
